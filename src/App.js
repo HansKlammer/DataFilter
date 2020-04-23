@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import "./App.css";
-import Counters from "./components/Counters";
-
+import LandingScreen from "./components/LandingScreen";
 
 class App extends Component {
   render() {
     return (
       <div>
-        <Counters/>
+        <LandingScreen />
       </div>
     );
   }
