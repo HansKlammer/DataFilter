@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import People from "./People";
-import { ListGroup, ListGroupItem } from "reactstrap";
 import { useState } from "react";
 import {
   ButtonDropdown,
@@ -8,11 +7,14 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
+import { Button } from "reactstrap";
+import { Table } from "reactstrap";
 
 class LandingScreen extends Component {
   state = {
     userInput: "",
     userSelect: "",
+    userSwitch: true,
   };
 
   handleChange = (event) => {
@@ -20,25 +22,49 @@ class LandingScreen extends Component {
   };
 
   handleSelect = (event) => {
+    if(event.target.value === "default"){
+      this.setState({userSelect: ""})
+    }else{
     this.setState({ userSelect: event.target.value });
+    }
+  };
+
+  handleReset = () => {
+    this.setState({ userInput: "", userSelect: "" });
+  };
+
+  handleSwitchColor = () => {
+    if (this.state.userSwitch) {
+      return "success";
+    } else {
+      return "danger";
+    }
+  };
+
+  handleSwitch = () => {
+    if (this.state.userSwitch) {
+      this.setState({ userSwitch: false });
+    }
+    if (!this.state.userSwitch) {
+      this.setState({ userSwitch: true });
+    }
   };
 
   render() {
     const filterString = "firstName";
     const filterSelect = "region";
-    let PeopleFilterFinal = People.filter((e, i, a) =>
+    const filterSwitch = "isActive"
+    let objectKeys = Object.keys(People[0]);
+    let PeopleFilterFinal = People.filter(e =>
       e[filterString].includes(this.state.userInput)
-    ).filter((o, i) => o[filterSelect].includes(this.state.userSelect));
+    ).filter(o => o[filterSelect].includes(this.state.userSelect)).filter(a => a[filterSwitch] === this.state.userSwitch);
 
-    let PeopleFilterString = People.filter((e, i) =>
-      e[filterString].includes(this.state.userInput)
-    );
-    let PeopleFilterSelect = People.filter(
-      (e, i) => e[filterSelect] === this.state.userSelect
-    );
+    
     let Selector = People.map((e, i) => e[filterSelect]).filter(
-      (e, i, a) => a.indexOf(e) === i
+      (e, i, a) => a.indexOf(e) === i 
     );
+
+
     const Drop = (props) => {
       const [dropdownOpen, setOpen] = useState(false);
       const toggle = () => setOpen(!dropdownOpen);
@@ -47,6 +73,7 @@ class LandingScreen extends Component {
           <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
             <DropdownToggle caret>{this.state.userSelect}</DropdownToggle>
             <DropdownMenu>
+              <DropdownItem onClick={this.handleSelect} value="default">Default</DropdownItem>
               {Selector.map((e, i) => (
                 <DropdownItem key={i} value={e} onClick={this.handleSelect}>
                   {e}
@@ -57,9 +84,14 @@ class LandingScreen extends Component {
         </div>
       );
     };
-    console.log(PeopleFilterSelect);
+    console.log(Selector);
     return (
       <div>
+        <div>
+          <Button color="success" onClick={this.handleReset}>
+            Reset
+          </Button>
+        </div>
         <div className="list">
           <div>
             <label>
@@ -75,45 +107,40 @@ class LandingScreen extends Component {
           </div>
           <div>Filter by select </div>
           <div>
-            <Drop />
+            <Drop></Drop>
+          </div>
+          <div>
+            Filter by switch{" "}
+            <Button
+              color={this.handleSwitchColor()}
+              onClick={this.handleSwitch}
+            >
+              isActive
+            </Button>
           </div>
         </div>
-        <div className="list">
-          <div>
-            <ListGroup size="sm">
-              <ListGroupItem active>{filterString}</ListGroupItem>
-              {PeopleFilterString.map((e, i) => (
-                <ListGroupItem action key={i}>
-                  {e[filterString]}
-                </ListGroupItem>
-              ))}
-            </ListGroup>
-          </div>
-          <div>
-            <ListGroup size="sm">
-              <ListGroupItem active>{filterSelect}</ListGroupItem>
-              {PeopleFilterSelect.map((e, i) => (
-                <ListGroupItem action key={i}>
-                  {e[filterSelect]}
-                </ListGroupItem>
-              ))}
-            </ListGroup>
-          </div>
-          <div>
-            <ListGroup size="sm">
-              <ListGroupItem active>{filterSelect}</ListGroupItem>
+
+        <div>
+          <Table dark>
+            <thead>
+              <tr>
+                <th scope="row">#</th>
+                {objectKeys.map((e, i) => (
+                  <td key={i}>{e}</td>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
               {PeopleFilterFinal.map((e, i) => (
-                <div className="list">
-                  <ListGroupItem action className="list" key={i}>
-                    {e[filterString]}
-                  </ListGroupItem>
-                  <ListGroupItem action className="list" key={i}>
-                    {e[filterSelect]}
-                  </ListGroupItem>
-                </div>
+                <tr>
+                  <th scope="row" key={i}>{i+1}</th>
+                  {objectKeys.map((u, y) => (
+                    <td key={y}>{e[u]}</td>
+                  ))}
+                </tr>
               ))}
-            </ListGroup>
-          </div>
+            </tbody>
+          </Table>
         </div>
       </div>
     );

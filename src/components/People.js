@@ -9,6 +9,7 @@ const People = [
       region: "CA",
       phoneNumber: "408-1234567",
       emailAddress: "romin.k.irani@gmail.com",
+      isActive: true
     },
     {
       userId: "irani",
@@ -19,7 +20,8 @@ const People = [
       employeeCode: "E2",
       region: "CA",
       phoneNumber: "408-1111111",
-      emailAddress: "neilrirani@gmail.com"
+      emailAddress: "neilrirani@gmail.com",
+      isActive: false
     },
     {
       userId: "hanks",
@@ -30,7 +32,8 @@ const People = [
       employeeCode: "E3",
       region: "CA",
       phoneNumber: "408-2222222",
-      emailAddress: "tomhanks@gmail.com"
+      emailAddress: "tomhanks@gmail.com",
+      isActive: true
     },
     {
       userId: "jaugustus0",
@@ -41,7 +44,8 @@ const People = [
       employeeCode: "169.126.8.71",
       region: "PT",
       phoneNumber: "402-212-2307",
-      emailAddress: "jaugustus0@upenn.edu"
+      emailAddress: "jaugustus0@upenn.edu",
+      isActive: false
     },
     {
       userId: "bmyott1",
@@ -52,7 +56,8 @@ const People = [
       employeeCode: "68.72.53.223",
       region: "ID",
       phoneNumber: "315-695-2264",
-      emailAddress: "bmyott1@patch.com"
+      emailAddress: "bmyott1@patch.com",
+      isActive: false
     },
     {
       userId: "pbikker2",
@@ -63,7 +68,8 @@ const People = [
       employeeCode: "227.219.98.24",
       region: "SE",
       phoneNumber: "330-364-8339",
-      emailAddress: "pbikker2@cornell.edu"
+      emailAddress: "pbikker2@cornell.edu",
+      isActive: false
     },
     {
       userId: "acrompton3",
@@ -74,7 +80,8 @@ const People = [
       employeeCode: "148.201.180.216",
       region: "CN",
       phoneNumber: "633-686-9856",
-      emailAddress: "acrompton3@time.com"
+      emailAddress: "acrompton3@time.com",
+      isActive: false
     },
     {
       userId: "gbradtke4",
@@ -85,7 +92,8 @@ const People = [
       employeeCode: "55.208.122.44",
       region: "CN",
       phoneNumber: "899-712-5659",
-      emailAddress: "gbradtke4@oaic.gov.au"
+      emailAddress: "gbradtke4@oaic.gov.au",
+      isActive: true
     },
     {
       userId: "ebernaciak5",
@@ -96,7 +104,8 @@ const People = [
       employeeCode: "13.207.55.28",
       region: "CN",
       phoneNumber: "377-879-9940",
-      emailAddress: "ebernaciak5@yahoo.co.jp"
+      emailAddress: "ebernaciak5@yahoo.co.jp",
+      isActive: true
     },
     {
       userId: "aklewi6",
@@ -107,7 +116,8 @@ const People = [
       employeeCode: "20.157.61.165",
       region: "CN",
       phoneNumber: "182-976-7139",
-      emailAddress: "aklewi6@constantcontact.com"
+      emailAddress: "aklewi6@constantcontact.com",
+      isActive: false
     },
     {
       userId: "smcclosh7",
@@ -118,7 +128,8 @@ const People = [
       employeeCode: "59.37.11.68",
       region: "PT",
       phoneNumber: "343-924-3541",
-      emailAddress: "smcclosh7@nymag.com"
+      emailAddress: "smcclosh7@nymag.com",
+      isActive: false
     },
     {
       userId: "lbillin8",
@@ -129,7 +140,8 @@ const People = [
       employeeCode: "0.44.147.210",
       region: "RU",
       phoneNumber: "796-397-4655",
-      emailAddress: "lbillin8@people.com.cn"
+      emailAddress: "lbillin8@people.com.cn",
+      isActive: true
     },
     {
       userId: "dwillcock9",
@@ -140,7 +152,8 @@ const People = [
       employeeCode: "165.218.38.131",
       region: "ID",
       phoneNumber: "247-381-5026",
-      emailAddress: "dwillcock9@moonfruit.com"
+      emailAddress: "dwillcock9@moonfruit.com",
+      isActive: true
     }
   ];
   
