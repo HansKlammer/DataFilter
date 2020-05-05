@@ -15,6 +15,10 @@ class LandingScreen extends Component {
     userInput: "",
     userSelect: "",
     userSwitch: true,
+    filterString: "firstName",
+    filterSelect: "region",
+    filterSwitch: "isActive",
+    data: People,
   };
 
   handleChange = (event) => {
@@ -29,8 +33,10 @@ class LandingScreen extends Component {
     }
   };
 
+  initialState = this.state;
+
   handleReset = () => {
-    this.setState({ userInput: "", userSelect: "" });
+    this.setState(this.initialState);
   };
 
   handleSwitchColor = () => {
@@ -49,25 +55,29 @@ class LandingScreen extends Component {
     }
   };
 
-  handleName = (filterSelect) => {
+  handleName = () => {
     if (this.state.userSelect.length === 0) {
-      return `Search by ${filterSelect}`;
+      return `Search by ${this.state.filterSelect}`;
     } else {
       return this.state.userSelect;
     }
   };
 
+  handleSearch = () => {
+    this.setState({
+      data: People.filter((e) =>
+        e[this.state.filterString].includes(this.state.userInput)
+      )
+        .filter((o) =>
+          o[this.state.filterSelect].includes(this.state.userSelect)
+        )
+        .filter((a) => a[this.state.filterSwitch] === this.state.userSwitch),
+    });
+  };
+
   render() {
-    const filterString = "firstName";
-    const filterSelect = "region";
-    const filterSwitch = "isActive";
     let objectKeys = Object.keys(People[0]);
-    let PeopleFilterFinal = People.filter((e) =>
-      e[filterString].includes(this.state.userInput)
-    )
-      .filter((o) => o[filterSelect].includes(this.state.userSelect))
-      .filter((a) => a[filterSwitch] === this.state.userSwitch);
-    let Selector = People.map((e, i) => e[filterSelect]).filter(
+    let Selector = People.map((e, i) => e[this.state.filterSelect]).filter(
       (e, i, a) => a.indexOf(e) === i
     );
 
@@ -77,9 +87,7 @@ class LandingScreen extends Component {
       return (
         <div>
           <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle caret>
-              {this.handleName(filterSelect)}
-            </DropdownToggle>
+            <DropdownToggle caret>{this.handleName()}</DropdownToggle>
             <DropdownMenu>
               <DropdownItem onClick={this.handleSelect} value="default">
                 Default
@@ -100,6 +108,9 @@ class LandingScreen extends Component {
           <Button color="success" onClick={this.handleReset}>
             Reset
           </Button>
+          <Button color="warning" onClick={this.handleSearch}>
+            Search
+          </Button>
         </div>
 
         <div className="list">
@@ -111,7 +122,7 @@ class LandingScreen extends Component {
                 name="userInput"
                 value={this.state.userInput}
                 type="text"
-                placeholder={"Search by " + filterString}
+                placeholder={"Search by " + this.state.filterString}
               ></input>
             </label>
           </div>
@@ -125,7 +136,7 @@ class LandingScreen extends Component {
               color={this.handleSwitchColor()}
               onClick={this.handleSwitch}
             >
-              {filterSwitch}
+              {this.state.filterSwitch}
             </Button>
           </div>
         </div>
@@ -140,7 +151,7 @@ class LandingScreen extends Component {
               </tr>
             </thead>
             <tbody>
-              {PeopleFilterFinal.map((e, i) => (
+              {this.state.data.map((e, i) => (
                 <tr>
                   <th scope="row" key={i}>
                     {i + 1}

@@ -90,7 +90,7 @@ const People = [
       lastName: "Bradtke",
       preferredFullName: "Galvan Bradtke",
       employeeCode: "55.208.122.44",
-      region: "CN",
+      region: "",
       phoneNumber: "899-712-5659",
       emailAddress: "gbradtke4@oaic.gov.au",
       isActive: true
