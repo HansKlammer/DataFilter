@@ -22,10 +22,10 @@ class LandingScreen extends Component {
   };
 
   handleSelect = (event) => {
-    if(event.target.value === "default"){
-      this.setState({userSelect: ""})
-    }else{
-    this.setState({ userSelect: event.target.value });
+    if (event.target.value === "default") {
+      this.setState({ userSelect: "" });
+    } else {
+      this.setState({ userSelect: event.target.value });
     }
   };
 
@@ -44,26 +44,32 @@ class LandingScreen extends Component {
   handleSwitch = () => {
     if (this.state.userSwitch) {
       this.setState({ userSwitch: false });
-    }
-    if (!this.state.userSwitch) {
+    } else {
       this.setState({ userSwitch: true });
+    }
+  };
+
+  handleName = (filterSelect) => {
+    if (this.state.userSelect.length === 0) {
+      return `Search by ${filterSelect}`;
+    } else {
+      return this.state.userSelect;
     }
   };
 
   render() {
     const filterString = "firstName";
     const filterSelect = "region";
-    const filterSwitch = "isActive"
+    const filterSwitch = "isActive";
     let objectKeys = Object.keys(People[0]);
-    let PeopleFilterFinal = People.filter(e =>
+    let PeopleFilterFinal = People.filter((e) =>
       e[filterString].includes(this.state.userInput)
-    ).filter(o => o[filterSelect].includes(this.state.userSelect)).filter(a => a[filterSwitch] === this.state.userSwitch);
-
-    
+    )
+      .filter((o) => o[filterSelect].includes(this.state.userSelect))
+      .filter((a) => a[filterSwitch] === this.state.userSwitch);
     let Selector = People.map((e, i) => e[filterSelect]).filter(
-      (e, i, a) => a.indexOf(e) === i 
+      (e, i, a) => a.indexOf(e) === i
     );
-
 
     const Drop = (props) => {
       const [dropdownOpen, setOpen] = useState(false);
@@ -71,9 +77,13 @@ class LandingScreen extends Component {
       return (
         <div>
           <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle caret>{this.state.userSelect}</DropdownToggle>
+            <DropdownToggle caret>
+              {this.handleName(filterSelect)}
+            </DropdownToggle>
             <DropdownMenu>
-              <DropdownItem onClick={this.handleSelect} value="default">Default</DropdownItem>
+              <DropdownItem onClick={this.handleSelect} value="default">
+                Default
+              </DropdownItem>
               {Selector.map((e, i) => (
                 <DropdownItem key={i} value={e} onClick={this.handleSelect}>
                   {e}
@@ -84,7 +94,6 @@ class LandingScreen extends Component {
         </div>
       );
     };
-    console.log(Selector);
     return (
       <div>
         <div>
@@ -92,6 +101,7 @@ class LandingScreen extends Component {
             Reset
           </Button>
         </div>
+
         <div className="list">
           <div>
             <label>
@@ -115,11 +125,10 @@ class LandingScreen extends Component {
               color={this.handleSwitchColor()}
               onClick={this.handleSwitch}
             >
-              isActive
+              {filterSwitch}
             </Button>
           </div>
         </div>
-
         <div>
           <Table dark>
             <thead>
@@ -133,15 +142,18 @@ class LandingScreen extends Component {
             <tbody>
               {PeopleFilterFinal.map((e, i) => (
                 <tr>
-                  <th scope="row" key={i}>{i+1}</th>
+                  <th scope="row" key={i}>
+                    {i + 1}
+                  </th>
                   {objectKeys.map((u, y) => (
-                    <td key={y}>{e[u]}</td>
+                    <td key={y}>{e[u].toString()}</td>
                   ))}
                 </tr>
               ))}
             </tbody>
           </Table>
         </div>
+        <div>{this.state.userSwitch}</div>
       </div>
     );
   }
