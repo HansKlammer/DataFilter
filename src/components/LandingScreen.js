@@ -32,11 +32,29 @@ class LandingScreen extends Component {
     } else {
       this.setState({ userSelect: event.target.value });
     }
-    const input = event.target.value;
-    this.state.filterPop.push({ value: input, change: "userSelect" });
+    let unique = this.state.filterPop
+      .map((u, y) => u.value)
+      .filter((e, i, a) => a.indexOf(e) === i);
+
+    let input = event.target.value;
+    if (
+      input.length > 0 &&
+      input !== "default" &&
+      unique.includes(input) === false
+    ) {
+      this.state.filterPop.push({ value: input, change: "userSelect" });
+    }
   };
 
-  initialState = this.state;
+  initialState = {
+    userInputStatic: "",
+    userInput: "",
+    userSelect: "",
+    userSwitch: "",
+    filterString: "firstName",
+    filterSelect: "region",
+    filterSwitch: "isActive",
+  };
 
   handleReset = () => {
     this.setState(this.initialState);
@@ -60,10 +78,13 @@ class LandingScreen extends Component {
     } else if (this.state.userSwitch === "false") {
       this.setState({ userSwitch: "" });
     }
-    const input = event.target.value;
-    if (input === "") {
-      this.state.filterPop.push({ value: "All", change: "userSwitch" });
-    } else {
+    let unique = this.state.filterPop
+      .map((u, y) => u.value)
+      .filter((e, i, a) => a.indexOf(e) === i);
+
+    let input = event.target.value;
+
+    if (input.length > 0 && unique.includes(input) === false) {
       this.state.filterPop.push({ value: input, change: "userSwitch" });
     }
   };
@@ -77,21 +98,31 @@ class LandingScreen extends Component {
   };
 
   handleSearch = () => {
-    const input = this.state.userInput;
+    let input = this.state.userInput;
     this.setState({ userInputStatic: input });
-    this.state.filterPop.push({ value: input, change: "userInputStatic" });
+    let unique = this.state.filterPop
+      .map((u, y) => u.value)
+      .filter((e, i, a) => a.indexOf(e) === i);
+
+    if (input.length > 0 && unique.includes(input) === false) {
+      this.state.filterPop.push({ value: input, change: "userInputStatic" });
+    }
   };
 
   handleSearchPop = (event) => {
-    if (event.target.value === "All") {
-      event.target.value = "";
-    }
+    this.setState(this.initialState);
     this.setState({ [event.target.name]: event.target.value });
+  };
+
+  handleDelete = (event) => {
+    let input = event.target.value;
+    let Badges = this.state.filterPop.filter((e, i) => input !== i.toString());
+    this.setState({ filterPop: Badges });
   };
 
   render() {
     let objectKeys = Object.keys(People[0]);
-    let Selector = People.map((e, i) => e[this.state.filterSelect]).filter(
+    let Selector = People.map((u, y) => u[this.state.filterSelect]).filter(
       (e, i, a) => a.indexOf(e) === i
     );
     let data = People.filter((e) =>
@@ -123,8 +154,6 @@ class LandingScreen extends Component {
         </div>
       );
     };
-    console.log(this.state.filterPop);
-    console.log(this.state.userSelect);
     return (
       <div>
         <div>
@@ -163,9 +192,8 @@ class LandingScreen extends Component {
         </div>
 
         <div>
-          {this.state.filterPop
-            .filter((e, i, a) => a.indexOf(e) === i)
-            .map((u, y) => (
+          {this.state.filterPop.map((u, y) => (
+            <div>
               <Button
                 color="dark"
                 name={u.change}
@@ -174,7 +202,15 @@ class LandingScreen extends Component {
               >
                 {u.value}
               </Button>
-            ))}
+              <Button
+                color="dark"
+                value={y.toString()}
+                onClick={this.handleDelete}
+              >
+                X
+              </Button>
+            </div>
+          ))}
         </div>
 
         <div>
