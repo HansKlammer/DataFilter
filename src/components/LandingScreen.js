@@ -17,9 +17,9 @@ class LandingScreen extends Component {
     userInput: "",
     userSelect: "",
     userSwitch: "",
-    filterString: "firstName",
-    filterSelect: "region",
-    filterSwitch: "isActive",
+    filterString: "",
+    filterSelect: "",
+    filterSwitch: "",
     filterPop: [],
   };
 
@@ -58,9 +58,6 @@ class LandingScreen extends Component {
     userInput: "",
     userSelect: "",
     userSwitch: "",
-    filterString: "firstName",
-    filterSelect: "region",
-    filterSwitch: "isActive",
   };
 
   handleReset = () => {
@@ -153,6 +150,29 @@ class LandingScreen extends Component {
     this.initialState.filterSwitch = input;
   };
 
+  handleDisableString = () => {
+    if (this.state.filterString === "") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  handleDisableSelect = () => {
+    if (this.state.filterSelect === "") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  handleDisableSwitch = () => {
+    if (this.state.filterSwitch === "") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   render() {
     let objectKeys = Object.keys(this.data[0]);
     let array = this.data;
@@ -169,20 +189,29 @@ class LandingScreen extends Component {
     );
     let objectKeysString = stringKeys.filter((e, i, a) => a.indexOf(e) === i);
     let objectKeysBoolean = booleanKeys.filter((e, i, a) => a.indexOf(e) === i);
+    let filterString = this.state.filterString;
+    let filterSelect = this.state.filterSelect;
+    let filterSwitch = this.state.filterSwitch;
+
+    if (filterString === "") {
+      filterString = objectKeysString[0];
+    }
+    if (filterSelect === "") {
+      filterSelect = objectKeysString[0];
+    }
+    if (filterSwitch === "") {
+      filterSwitch = objectKeysBoolean[0];
+    }
     let Selector = this.data
-      .map((u, y) => u[this.state.filterSelect].toString())
+      .map((u, y) => u[filterSelect].toString())
       .filter((e, i, a) => a.indexOf(e) === i);
     let dataFiltered = this.data
       .filter((e) =>
-        e[this.state.filterString]
-          .toString()
-          .includes(this.state.userInputStatic)
+        e[filterString].toString().includes(this.state.userInputStatic)
       )
-      .filter((o) =>
-        o[this.state.filterSelect].toString().includes(this.state.userSelect)
-      )
+      .filter((o) => o[filterSelect].toString().includes(this.state.userSelect))
       .filter((a) =>
-        a[this.state.filterSwitch].toString().includes(this.state.userSwitch)
+        a[filterSwitch].toString().includes(this.state.userSwitch)
       );
 
     const DropdownSelector = (props) => {
@@ -191,7 +220,9 @@ class LandingScreen extends Component {
       return (
         <div>
           <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle caret>{this.handleName()}</DropdownToggle>
+            <DropdownToggle caret disabled={this.handleDisableSelect()}>
+              {this.handleName()}
+            </DropdownToggle>
             <DropdownMenu>
               <DropdownItem onClick={this.handleSelect} value="default">
                 Default
@@ -292,9 +323,13 @@ class LandingScreen extends Component {
                 name="userInput"
                 value={this.state.userInput}
                 type="text"
-                placeholder={"Search by " + this.state.filterString.toString()}
+                placeholder={"Search by " + filterString}
               ></input>
-              <Button color="primary" onClick={this.handleSearch}>
+              <Button
+                color="primary"
+                onClick={this.handleSearch}
+                disabled={this.handleDisableString()}
+              >
                 Search
               </Button>
               <DropdownOptionSearch></DropdownOptionSearch>
@@ -309,8 +344,9 @@ class LandingScreen extends Component {
               value={this.state.userSwitch}
               color={this.handleSwitchColor()}
               onClick={this.handleSwitch}
+              disabled={this.handleDisableSwitch()}
             >
-              {this.state.filterSwitch}
+              {filterSwitch}
             </Button>
             <DropdownOptionSwitch></DropdownOptionSwitch>
           </div>
