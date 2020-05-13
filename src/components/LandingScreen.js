@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import People from "./People";
+import UserInfo from "./UserInfo";
 import { useState } from "react";
 import {
   ButtonDropdown,
@@ -22,6 +23,8 @@ class LandingScreen extends Component {
     filterPop: [],
   };
 
+  data = People;
+
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -42,7 +45,11 @@ class LandingScreen extends Component {
       input !== "default" &&
       unique.includes(input) === false
     ) {
-      this.state.filterPop.push({ value: input, change: "userSelect" });
+      this.state.filterPop.push({
+        value: input,
+        change: "userSelect",
+        color: "dark",
+      });
     }
   };
 
@@ -85,7 +92,11 @@ class LandingScreen extends Component {
     let input = event.target.value;
 
     if (input.length > 0 && unique.includes(input) === false) {
-      this.state.filterPop.push({ value: input, change: "userSwitch" });
+      this.state.filterPop.push({
+        value: input,
+        change: "userSwitch",
+        color: "warning",
+      });
     }
   };
 
@@ -105,7 +116,11 @@ class LandingScreen extends Component {
       .filter((e, i, a) => a.indexOf(e) === i);
 
     if (input.length > 0 && unique.includes(input) === false) {
-      this.state.filterPop.push({ value: input, change: "userInputStatic" });
+      this.state.filterPop.push({
+        value: input,
+        change: "userInputStatic",
+        color: "primary",
+      });
     }
   };
 
@@ -120,20 +135,57 @@ class LandingScreen extends Component {
     this.setState({ filterPop: Badges });
   };
 
+  handleOptionSearch = (event) => {
+    let input = event.target.value;
+    this.setState({ filterString: input });
+    this.initialState.filterString = input;
+  };
+
+  handleOptionSelect = (event) => {
+    let input = event.target.value;
+    this.setState({ filterSelect: input });
+    this.initialState.filterSelect = input;
+  };
+
+  handleOptionSwitch = (event) => {
+    let input = event.target.value;
+    this.setState({ filterSwitch: input });
+    this.initialState.filterSwitch = input;
+  };
+
   render() {
-    let objectKeys = Object.keys(People[0]);
-    let Selector = People.map((u, y) => u[this.state.filterSelect]).filter(
-      (e, i, a) => a.indexOf(e) === i
+    let objectKeys = Object.keys(this.data[0]);
+    let array = this.data;
+    let booleanKeys = [];
+    let stringKeys = [];
+    objectKeys.forEach((e, i) =>
+      array.forEach((u) => {
+        if (typeof u[e] === "string") {
+          stringKeys.push(e);
+        } else if (typeof u[e] === "boolean") {
+          booleanKeys.push(e);
+        }
+      })
     );
-    let data = People.filter((e) =>
-      e[this.state.filterString].includes(this.state.userInputStatic)
-    )
-      .filter((o) => o[this.state.filterSelect].includes(this.state.userSelect))
+    let objectKeysString = stringKeys.filter((e, i, a) => a.indexOf(e) === i);
+    let objectKeysBoolean = booleanKeys.filter((e, i, a) => a.indexOf(e) === i);
+    let Selector = this.data
+      .map((u, y) => u[this.state.filterSelect].toString())
+      .filter((e, i, a) => a.indexOf(e) === i);
+    let dataFiltered = this.data
+      .filter((e) =>
+        e[this.state.filterString]
+          .toString()
+          .includes(this.state.userInputStatic)
+      )
+      .filter((o) =>
+        o[this.state.filterSelect].toString().includes(this.state.userSelect)
+      )
       .filter((a) =>
         a[this.state.filterSwitch].toString().includes(this.state.userSwitch)
       );
 
-    const Drop = (props) => {
+    const DropdownSelector = (props) => {
       const [dropdownOpen, setOpen] = useState(false);
       const toggle = () => setOpen(!dropdownOpen);
       return (
@@ -154,6 +206,76 @@ class LandingScreen extends Component {
         </div>
       );
     };
+
+    const DropdownOptionSearch = (props) => {
+      const [dropdownOpen, setOpen] = useState(false);
+      const toggle = () => setOpen(!dropdownOpen);
+      return (
+        <div>
+          <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle caret>Filter option</DropdownToggle>
+            <DropdownMenu>
+              {objectKeysString.map((e, i) => (
+                <DropdownItem
+                  key={i}
+                  value={e}
+                  onClick={this.handleOptionSearch}
+                >
+                  {e}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </ButtonDropdown>
+        </div>
+      );
+    };
+
+    const DropdownOptionSelect = (props) => {
+      const [dropdownOpen, setOpen] = useState(false);
+      const toggle = () => setOpen(!dropdownOpen);
+      return (
+        <div>
+          <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle caret>Filter option</DropdownToggle>
+            <DropdownMenu>
+              {objectKeys.map((e, i) => (
+                <DropdownItem
+                  key={i}
+                  value={e}
+                  onClick={this.handleOptionSelect}
+                >
+                  {e}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </ButtonDropdown>
+        </div>
+      );
+    };
+
+    const DropdownOptionSwitch = (props) => {
+      const [dropdownOpen, setOpen] = useState(false);
+      const toggle = () => setOpen(!dropdownOpen);
+      return (
+        <div>
+          <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle caret>Filter option</DropdownToggle>
+            <DropdownMenu>
+              {objectKeysBoolean.map((e, i) => (
+                <DropdownItem
+                  key={i}
+                  value={e}
+                  onClick={this.handleOptionSwitch}
+                >
+                  {e}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </ButtonDropdown>
+        </div>
+      );
+    };
+
     return (
       <div>
         <div>
@@ -170,15 +292,17 @@ class LandingScreen extends Component {
                 name="userInput"
                 value={this.state.userInput}
                 type="text"
-                placeholder={"Search by " + this.state.filterString}
+                placeholder={"Search by " + this.state.filterString.toString()}
               ></input>
               <Button color="primary" onClick={this.handleSearch}>
                 Search
               </Button>
+              <DropdownOptionSearch></DropdownOptionSearch>
             </label>
           </div>
           <div>
-            <Drop></Drop>
+            <DropdownSelector></DropdownSelector>
+            <DropdownOptionSelect></DropdownOptionSelect>
           </div>
           <div>
             <Button
@@ -188,6 +312,7 @@ class LandingScreen extends Component {
             >
               {this.state.filterSwitch}
             </Button>
+            <DropdownOptionSwitch></DropdownOptionSwitch>
           </div>
         </div>
 
@@ -195,7 +320,7 @@ class LandingScreen extends Component {
           {this.state.filterPop.map((u, y) => (
             <div>
               <Button
-                color="dark"
+                color={u.color}
                 name={u.change}
                 value={u.value}
                 onClick={this.handleSearchPop}
@@ -203,7 +328,7 @@ class LandingScreen extends Component {
                 {u.value}
               </Button>
               <Button
-                color="dark"
+                color={u.color}
                 value={y.toString()}
                 onClick={this.handleDelete}
               >
@@ -224,7 +349,7 @@ class LandingScreen extends Component {
               </tr>
             </thead>
             <tbody>
-              {data.map((e, i) => (
+              {dataFiltered.map((e, i) => (
                 <tr>
                   <th scope="row" key={i}>
                     {i + 1}
