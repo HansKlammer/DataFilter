@@ -1,15 +1,7 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
+import { Button, ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle, Table } from "reactstrap";
 import People from "./People";
-import UserInfo from "./UserInfo";
-import { useState } from "react";
-import {
-  ButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from "reactstrap";
-import { Button } from "reactstrap";
-import { Table } from "reactstrap";
+import UserInfo from "./UserInfo"
 
 class LandingScreen extends Component {
   state = {
@@ -23,7 +15,8 @@ class LandingScreen extends Component {
     filterPop: [],
   };
 
-  data = People;
+  data = UserInfo;
+
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
@@ -35,34 +28,30 @@ class LandingScreen extends Component {
     } else {
       this.setState({ userSelect: event.target.value });
     }
+    let compare = this.state.filterSelect + event.target.value + "filterSelect"
     let unique = this.state.filterPop
-      .map((u, y) => u.value)
-      .filter((e, i, a) => a.indexOf(e) === i);
+      .map((u, y) => u.checker)
+      .filter((e, i, a) => a.indexOf(e) === i );
 
     let input = event.target.value;
     if (
       input.length > 0 &&
       input !== "default" &&
-      unique.includes(input) === false
+      unique.includes(compare) === false
     ) {
+      const userValue=this.state.filterSelect
       this.state.filterPop.push({
         value: input,
-        change: "userSelect",
+        changeInput: "userSelect",
+        changeUser: "filterSelect",
+        changeUserValue: userValue,
+        checker: userValue + input + "filterSelect",
         color: "dark",
       });
     }
   };
 
-  initialState = {
-    userInputStatic: "",
-    userInput: "",
-    userSelect: "",
-    userSwitch: "",
-  };
-
-  handleReset = () => {
-    this.setState(this.initialState);
-  };
+  
 
   handleSwitchColor = () => {
     if (this.state.userSwitch === "") {
@@ -82,17 +71,23 @@ class LandingScreen extends Component {
     } else if (this.state.userSwitch === "false") {
       this.setState({ userSwitch: "" });
     }
+    let compare = this.state.filterSwitch + event.target.value + "filterSwitch"
     let unique = this.state.filterPop
-      .map((u, y) => u.value)
+      .map((u, y) => u.checker)
       .filter((e, i, a) => a.indexOf(e) === i);
 
     let input = event.target.value;
 
-    if (input.length > 0 && unique.includes(input) === false) {
+    if (input.length > 0 && unique.includes(compare) === false) {
+      const userValue=this.state.filterSwitch
       this.state.filterPop.push({
         value: input,
-        change: "userSwitch",
+        changeInput: "userSwitch",
+        changeUser: "filterSwitch",
+        changeUserValue: userValue,
+        checker: userValue + input + "filterSwitch",
         color: "warning",
+
       });
     }
   };
@@ -108,47 +103,32 @@ class LandingScreen extends Component {
   handleSearch = () => {
     let input = this.state.userInput;
     this.setState({ userInputStatic: input });
+    let compare = this.state.filterString + this.state.userInput + "filterString"
     let unique = this.state.filterPop
-      .map((u, y) => u.value)
+      .map((u, y) => u.checker)
       .filter((e, i, a) => a.indexOf(e) === i);
 
-    if (input.length > 0 && unique.includes(input) === false) {
+    if (input.length > 0 && unique.includes(compare) === false) {
+      const userValue=this.state.filterString
       this.state.filterPop.push({
         value: input,
-        change: "userInputStatic",
+        changeInput: "userInputStatic",
+        changeUser: "filterString",
+        changeUserValue: userValue,
+        checker: userValue + input + "filterString",
         color: "primary",
       });
     }
   };
 
-  handleSearchPop = (event) => {
-    this.setState(this.initialState);
-    this.setState({ [event.target.name]: event.target.value });
-  };
 
   handleDelete = (event) => {
     let input = event.target.value;
     let Badges = this.state.filterPop.filter((e, i) => input !== i.toString());
-    this.setState({ filterPop: Badges });
+    this.setState({ filterPop: Badges, [event.target.name]:""});
   };
 
-  handleOptionSearch = (event) => {
-    let input = event.target.value;
-    this.setState({ filterString: input });
-    this.initialState.filterString = input;
-  };
-
-  handleOptionSelect = (event) => {
-    let input = event.target.value;
-    this.setState({ filterSelect: input });
-    this.initialState.filterSelect = input;
-  };
-
-  handleOptionSwitch = (event) => {
-    let input = event.target.value;
-    this.setState({ filterSwitch: input });
-    this.initialState.filterSwitch = input;
-  };
+  
 
   handleDisableString = () => {
     if (this.state.filterString === "") {
@@ -174,12 +154,20 @@ class LandingScreen extends Component {
   };
 
   render() {
-    let objectKeys = Object.keys(this.data[0]);
-    let array = this.data;
+    let dataRaw = []
+    if(this.data.length === 0 ){
+      dataRaw=[{emptyString:"",emptyBool: false}]
+    }else{
+      dataRaw= this.data
+    }
+    
+    
+    let objectKeys = Object.keys(dataRaw[0])
+    
     let booleanKeys = [];
     let stringKeys = [];
     objectKeys.forEach((e, i) =>
-      array.forEach((u) => {
+      dataRaw.forEach((u) => {
         if (typeof u[e] === "string") {
           stringKeys.push(e);
         } else if (typeof u[e] === "boolean") {
@@ -193,19 +181,21 @@ class LandingScreen extends Component {
     let filterSelect = this.state.filterSelect;
     let filterSwitch = this.state.filterSwitch;
 
+    
+    
     if (filterString === "") {
-      filterString = objectKeysString[0];
+      filterString =  objectKeysString[0];
     }
     if (filterSelect === "") {
-      filterSelect = objectKeysString[0];
+      filterSelect =  objectKeysString[0];
     }
     if (filterSwitch === "") {
-      filterSwitch = objectKeysBoolean[0];
+      filterSwitch =  objectKeysString[0];
     }
-    let Selector = this.data
+    let Selector = dataRaw
       .map((u, y) => u[filterSelect].toString())
       .filter((e, i, a) => a.indexOf(e) === i);
-    let dataFiltered = this.data
+    let dataFiltered = dataRaw
       .filter((e) =>
         e[filterString].toString().includes(this.state.userInputStatic)
       )
@@ -249,8 +239,8 @@ class LandingScreen extends Component {
               {objectKeysString.map((e, i) => (
                 <DropdownItem
                   key={i}
-                  value={e}
-                  onClick={this.handleOptionSearch}
+                  
+                  onClick={() => this.setState({ filterString: e})}
                 >
                   {e}
                 </DropdownItem>
@@ -272,8 +262,7 @@ class LandingScreen extends Component {
               {objectKeys.map((e, i) => (
                 <DropdownItem
                   key={i}
-                  value={e}
-                  onClick={this.handleOptionSelect}
+                  onClick={() => this.setState({ filterSelect: e})}
                 >
                   {e}
                 </DropdownItem>
@@ -295,8 +284,7 @@ class LandingScreen extends Component {
               {objectKeysBoolean.map((e, i) => (
                 <DropdownItem
                   key={i}
-                  value={e}
-                  onClick={this.handleOptionSwitch}
+                  onClick={() => this.setState({ filterSwitch: e})}
                 >
                   {e}
                 </DropdownItem>
@@ -310,7 +298,10 @@ class LandingScreen extends Component {
     return (
       <div>
         <div>
-          <Button color="info" onClick={this.handleReset}>
+          <Button color="info" onClick={() => this.setState({userInputStatic: "",
+              userInput: "",
+              userSelect: "",
+              userSwitch: ""})}>
             Reset Filter
           </Button>
         </div>
@@ -321,6 +312,7 @@ class LandingScreen extends Component {
               <input
                 onChange={this.handleChange}
                 name="userInput"
+
                 value={this.state.userInput}
                 type="text"
                 placeholder={"Search by " + filterString}
@@ -356,15 +348,22 @@ class LandingScreen extends Component {
           {this.state.filterPop.map((u, y) => (
             <div>
               <Button
+                key={y}
                 color={u.color}
-                name={u.change}
+                user={u.changeUser}
+                userValue={u.changeUserValue}
+                name={u.changeInput}
                 value={u.value}
-                onClick={this.handleSearchPop}
+                onClick={() => this.setState({  
+                [u.changeInput]: u.value,
+                [u.changeUser]: u.changeUserValue})}
               >
-                {u.value}
+                {u.changeUserValue}: {u.value}
               </Button>
               <Button
+                key={y+1}
                 color={u.color}
+                name={u.changeInput}
                 value={y.toString()}
                 onClick={this.handleDelete}
               >
@@ -380,13 +379,13 @@ class LandingScreen extends Component {
               <tr>
                 <th scope="row">#</th>
                 {objectKeys.map((e, i) => (
-                  <td key={i}>{e}</td>
+                  <td key={i} className="bold">{e}</td>
                 ))}
               </tr>
             </thead>
             <tbody>
               {dataFiltered.map((e, i) => (
-                <tr>
+                <tr key={i}>
                   <th scope="row" key={i}>
                     {i + 1}
                   </th>
