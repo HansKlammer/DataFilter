@@ -2,6 +2,7 @@ import React, { Component, useState } from "react";
 import { Button, ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle, Table } from "reactstrap";
 import People from "./People";
 import UserInfo from "./UserInfo"
+import Customer from "./Customer"
 
 class LandingScreen extends Component {
   state = {
@@ -15,15 +16,13 @@ class LandingScreen extends Component {
     filterPop: [],
   };
 
-  data = UserInfo;
-
+  data = People;
 
   handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
+    this.setState({ [event.target.name]: event.target.value })
+  }
   handleSelect = (event) => {
-    if (event.target.value === "default") {
+    if (event.target.value === "defaultsetState") {
       this.setState({ userSelect: "" });
     } else {
       this.setState({ userSelect: event.target.value });
@@ -145,6 +144,7 @@ class LandingScreen extends Component {
       return false;
     }
   };
+  
   handleDisableSwitch = () => {
     if (this.state.filterSwitch === "") {
       return true;
@@ -155,14 +155,21 @@ class LandingScreen extends Component {
 
   render() {
     let dataRaw = []
-    if(this.data.length === 0 ){
-      dataRaw=[{emptyString:"",emptyBool: false}]
+    let initialInput = [{emptyString:"",emptyBool: false}] 
+    if(this.data === undefined){
+      dataRaw=initialInput
     }else{
-      dataRaw= this.data
+      if(this.data.length === 0){
+        dataRaw=initialInput
+      }else{
+        dataRaw= this.data
+      }
+
     }
     
-    
     let objectKeys = Object.keys(dataRaw[0])
+    
+  
     
     let booleanKeys = [];
     let stringKeys = [];
@@ -180,7 +187,7 @@ class LandingScreen extends Component {
     let filterString = this.state.filterString;
     let filterSelect = this.state.filterSelect;
     let filterSwitch = this.state.filterSwitch;
-
+    
     
     
     if (filterString === "") {
@@ -214,7 +221,7 @@ class LandingScreen extends Component {
               {this.handleName()}
             </DropdownToggle>
             <DropdownMenu>
-              <DropdownItem onClick={this.handleSelect} value="default">
+              <DropdownItem onClick={this.handleSelect} value="defaultsetState">
                 Default
               </DropdownItem>
               {Selector.map((e, i) => (
