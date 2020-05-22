@@ -14,40 +14,50 @@ class LandingScreen extends Component {
     filterSelect: "",
     filterSwitch: "",
     filterPop: [],
+    data:People,
+    nameSort: "up"
   };
 
-  data = People;
+  
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
   handleSelect = (event) => {
-    if (event.target.value === "defaultsetState") {
-      this.setState({ userSelect: "" });
-    } else {
+    
       this.setState({ userSelect: event.target.value });
-    }
-    let compare = this.state.filterSelect + event.target.value + "filterSelect"
+    
+
     let unique = this.state.filterPop
-      .map((u, y) => u.checker)
+      .map((u, y) => u.changeUserValue)
       .filter((e, i, a) => a.indexOf(e) === i );
 
     let input = event.target.value;
     if (
       input.length > 0 &&
-      input !== "default" &&
-      unique.includes(compare) === false
+      unique.includes(this.state.filterSelect) === false
     ) {
       const userValue=this.state.filterSelect
+
       this.state.filterPop.push({
         value: input,
         changeInput: "userSelect",
         changeUser: "filterSelect",
         changeUserValue: userValue,
-        checker: userValue + input + "filterSelect",
         color: "dark",
       });
-    }
+    } else if(unique.includes(this.state.filterSelect)){
+      const userValue=this.state.filterSelect
+      let Badges = this.state.filterPop.filter((e, i) => e[unique] === this.state.filterSelect);
+      this.setState({ filterPop:[...Badges,{
+        value: input,
+        changeInput: "userSelect",
+        changeUser: "filterSelect",
+        changeUserValue: userValue,
+        color: "primary"
+      }]});
+      
+  }
   };
 
   
@@ -68,27 +78,36 @@ class LandingScreen extends Component {
     } else if (this.state.userSwitch === "true") {
       this.setState({ userSwitch: "false" });
     } else if (this.state.userSwitch === "false") {
-      this.setState({ userSwitch: "" });
+      this.setState({ userSwitch: "true" });
     }
-    let compare = this.state.filterSwitch + event.target.value + "filterSwitch"
     let unique = this.state.filterPop
-      .map((u, y) => u.checker)
+      .map((u, y) => u.changeUserValue)
       .filter((e, i, a) => a.indexOf(e) === i);
 
     let input = event.target.value;
 
-    if (input.length > 0 && unique.includes(compare) === false) {
+    if (input.length > 0 && unique.includes(this.state.filterSwitch) === false) {
       const userValue=this.state.filterSwitch
       this.state.filterPop.push({
         value: input,
         changeInput: "userSwitch",
         changeUser: "filterSwitch",
         changeUserValue: userValue,
-        checker: userValue + input + "filterSwitch",
         color: "warning",
 
       });
-    }
+    }else if(unique.includes(this.state.filterSwitch)){
+      const userValue=this.state.filterSwitch
+      let Badges = this.state.filterPop.filter((e, i) => e[unique] === this.state.filterSwitch);
+      this.setState({ filterPop:[...Badges,{
+        value: input,
+        changeInput: "userSwitch",
+        changeUser: "filterSwitch",
+        changeUserValue: userValue,
+        color: "primary"
+      }]});
+      
+  }
   };
 
   handleName = () => {
@@ -100,23 +119,33 @@ class LandingScreen extends Component {
   };
 
   handleSearch = () => {
+    console.log(this.state.filterPop)
     let input = this.state.userInput;
     this.setState({ userInputStatic: input });
-    let compare = this.state.filterString + this.state.userInput + "filterString"
     let unique = this.state.filterPop
-      .map((u, y) => u.checker)
+      .map((u, y) => u.changeUserValue)
       .filter((e, i, a) => a.indexOf(e) === i);
 
-    if (input.length > 0 && unique.includes(compare) === false) {
+    if (input.length > 0 && unique.includes(this.state.filterString) === false) {
       const userValue=this.state.filterString
       this.state.filterPop.push({
         value: input,
         changeInput: "userInputStatic",
         changeUser: "filterString",
         changeUserValue: userValue,
-        checker: userValue + input + "filterString",
         color: "primary",
       });
+    } else if(unique.includes(this.state.filterString)){
+        const userValue=this.state.filterString
+        let Badges = this.state.filterPop.filter((e, i) => e[unique] === this.state.filterString);
+        this.setState({ filterPop:[...Badges,{
+          value: input,
+          changeInput: "userInputStatic",
+          changeUser: "filterString",
+          changeUserValue: userValue,
+          color: "primary"
+        }]});
+        
     }
   };
 
@@ -144,7 +173,7 @@ class LandingScreen extends Component {
       return false;
     }
   };
-  
+
   handleDisableSwitch = () => {
     if (this.state.filterSwitch === "") {
       return true;
@@ -153,16 +182,46 @@ class LandingScreen extends Component {
     }
   };
 
+  handleSort = (value,name) => {
+    const nameSort =name
+    let final=this.state.data
+    if(nameSort === "up"){
+    let input = value
+    
+    let sorted = final.sort((a,b)=>{
+      if(a[input]===b[input]) return 0;
+      return a[input]<b[input] ? -1 : 1;
+    })
+    this.setState({data:sorted,nameSort: "down"})
+  }else if(nameSort === "down"){
+    let input = value
+    
+    let sorted = final.reverse((a,b)=>{
+      if(a[input]===b[input]) return 0;
+      return a[input]<b[input] ? -1 : 1;
+    })
+    this.setState({data:sorted,nameSort: "up"})
+  }
+    
+  
+    //this.setState({data:final})
+    //}else if(nameSort === "down"){
+    //let yeet = this.state.data.map(e => e[input]).sort().reverse()
+    //yeet.forEach((u,i)=> final[i][input]=u)
+    //this.setState({data:final,nameSort: "up"})
+    //}
+  }
+
   render() {
     let dataRaw = []
     let initialInput = [{emptyString:"",emptyBool: false}] 
-    if(this.data === undefined){
+    if(this.state.data === undefined){
       dataRaw=initialInput
     }else{
-      if(this.data.length === 0){
+      if(this.state.data.length === 0){
         dataRaw=initialInput
       }else{
-        dataRaw= this.data
+        dataRaw= this.state.data
       }
 
     }
@@ -199,18 +258,28 @@ class LandingScreen extends Component {
     if (filterSwitch === "") {
       filterSwitch =  objectKeysString[0];
     }
+
+    let filterBages= this.state.filterPop
+
+
     let Selector = dataRaw
       .map((u, y) => u[filterSelect].toString())
       .filter((e, i, a) => a.indexOf(e) === i);
     let dataFiltered = dataRaw
-      .filter((e) =>
-        e[filterString].toString().includes(this.state.userInputStatic)
-      )
-      .filter((o) => o[filterSelect].toString().includes(this.state.userSelect))
-      .filter((a) =>
-        a[filterSwitch].toString().includes(this.state.userSwitch)
-      );
+    //  .filter((e) =>
+    //   e[filterString].toString().includes(this.state.userInputStatic)
+    //  )
+    //  .filter((o) => o[filterSelect].toString().includes(this.state.userSelect))
+    //  .filter((a) =>
+    //   a[filterSwitch].toString().includes(this.state.userSwitch)
+    //  );
 
+      if(filterBages.length !== 0){ 
+        let dataFilterBadges = dataFiltered
+        filterBages.forEach(u => {dataFilterBadges =dataFilterBadges.filter(e => e[u.changeUserValue].toString().includes([u.value])) })
+        dataFiltered = dataFilterBadges
+      }
+      
     const DropdownSelector = (props) => {
       const [dropdownOpen, setOpen] = useState(false);
       const toggle = () => setOpen(!dropdownOpen);
@@ -221,9 +290,6 @@ class LandingScreen extends Component {
               {this.handleName()}
             </DropdownToggle>
             <DropdownMenu>
-              <DropdownItem onClick={this.handleSelect} value="defaultsetState">
-                Default
-              </DropdownItem>
               {Selector.map((e, i) => (
                 <DropdownItem key={i} value={e} onClick={this.handleSelect}>
                   {e}
@@ -241,7 +307,7 @@ class LandingScreen extends Component {
       return (
         <div>
           <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle caret>Filter option</DropdownToggle>
+      <DropdownToggle caret>{this.state.filterString}</DropdownToggle>
             <DropdownMenu>
               {objectKeysString.map((e, i) => (
                 <DropdownItem
@@ -264,7 +330,7 @@ class LandingScreen extends Component {
       return (
         <div>
           <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle caret>Filter option</DropdownToggle>
+            <DropdownToggle caret>{this.state.filterSelect}</DropdownToggle>
             <DropdownMenu>
               {objectKeys.map((e, i) => (
                 <DropdownItem
@@ -286,7 +352,7 @@ class LandingScreen extends Component {
       return (
         <div>
           <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle caret>Filter option</DropdownToggle>
+            <DropdownToggle caret>{this.state.filterSwitch}</DropdownToggle>
             <DropdownMenu>
               {objectKeysBoolean.map((e, i) => (
                 <DropdownItem
@@ -355,21 +421,18 @@ class LandingScreen extends Component {
           {this.state.filterPop.map((u, y) => (
             <div>
               <Button
-                key={y}
-                color={u.color}
+                color="dark"
                 user={u.changeUser}
                 userValue={u.changeUserValue}
                 name={u.changeInput}
                 value={u.value}
-                onClick={() => this.setState({  
-                [u.changeInput]: u.value,
-                [u.changeUser]: u.changeUserValue})}
+               
               >
                 {u.changeUserValue}: {u.value}
               </Button>
               <Button
                 key={y+1}
-                color={u.color}
+                color="dark"
                 name={u.changeInput}
                 value={y.toString()}
                 onClick={this.handleDelete}
@@ -381,12 +444,12 @@ class LandingScreen extends Component {
         </div>
 
         <div>
-          <Table dark>
+          <Table dark responsive>
             <thead>
               <tr>
                 <th scope="row">#</th>
                 {objectKeys.map((e, i) => (
-                  <td key={i} className="bold">{e}</td>
+                  <td key={i} value={e} onClick={() => this.handleSort(e,this.state.nameSort)} >{e}</td>
                 ))}
               </tr>
             </thead>
